@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.tygilbert.virtualstudyroom.dto.message.MessageResponse;
 import com.tygilbert.virtualstudyroom.entity.Message;
 import com.tygilbert.virtualstudyroom.entity.Room;
 import com.tygilbert.virtualstudyroom.entity.User;
@@ -34,7 +35,7 @@ public class ChatService {
         this.chatContentPolicyService = chatContentPolicyService;
     }
 
-    public void saveAndPublishChat(Long roomId, String body, String email) {
+    public MessageResponse saveAndPublishChat(Long roomId, String body, String email) {
         if (email == null || email.isBlank()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid user context");
         }
@@ -57,6 +58,15 @@ public class ChatService {
                 roomId,
                 saved.getUser().getDisplayName(),
                 saved.getBody()
+        );
+
+        return new MessageResponse(
+            saved.getId(),
+            saved.getRoom().getId(),
+            saved.getUser().getId(),
+            saved.getUser().getDisplayName(),
+            saved.getBody(),
+            saved.getCreatedAt()
         );
     }
 }

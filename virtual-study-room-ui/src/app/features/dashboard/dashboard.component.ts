@@ -26,7 +26,7 @@ import { Room } from '../../shared/models/room.model';
           (click)="openJoinModal()"
           class="rounded-full border border-stone-500 bg-stone-100 px-4 py-2 text-sm font-medium hover:bg-stone-200"
         >
-          Join by Code
+          Join by Room ID
         </button>
       </div>
 
@@ -40,6 +40,7 @@ import { Room } from '../../shared/models/room.model';
         >
           <button type="button" (click)="openRoom(room.id)" class="text-left">
             <p class="text-base leading-tight">{{ room.name }}</p>
+            <p class="mt-0.5 text-xs text-stone-500">Room ID: {{ room.id }}</p>
             <div class="mt-1 flex flex-wrap items-center gap-2 text-xs text-stone-700">
               <span>{{ room.memberCount }} users</span>
               <span *ngIf="isOwnedByCurrentUser(room)" class="rounded-full bg-teal-100 px-2 py-0.5 font-semibold text-teal-800">OWNER</span>
@@ -105,14 +106,14 @@ import { Room } from '../../shared/models/room.model';
 
       <div *ngIf="showJoinModal" class="fixed inset-0 z-50 flex items-center justify-center bg-stone-900/35 p-4">
         <div class="w-full max-w-md border border-stone-500 bg-stone-50 p-4 shadow-lg">
-          <h3 class="mb-3 text-xl font-medium">Join by Code</h3>
+          <h3 class="mb-3 text-xl font-medium">Join by Room ID</h3>
           <input
             [ngModel]="joinRoomCodeInput"
             (ngModelChange)="onJoinCodeInput($event)"
             inputmode="numeric"
             pattern="[0-9]*"
             autocomplete="off"
-            placeholder="Enter room code"
+            placeholder="Enter Room ID"
             class="mb-3 h-10 w-full border border-stone-500 bg-white px-3"
           />
           <div class="flex justify-end gap-2">

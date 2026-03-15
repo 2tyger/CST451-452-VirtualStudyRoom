@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
@@ -57,7 +57,10 @@ interface FeedItem {
     <ng-container *ngIf="entryState === 'ready'">
       <section class="border border-stone-400 bg-stone-100 p-3">
         <div class="mb-3 flex items-center justify-between border-b border-stone-400 pb-3">
-          <h2 class="text-2xl font-normal text-stone-900">{{ roomDetail?.room?.name || 'Room Name' }}</h2>
+          <div>
+            <h2 class="text-2xl font-normal text-stone-900">{{ roomDetail?.room?.name || 'Room Name' }}</h2>
+            <p class="text-xs text-stone-500">Room ID: {{ roomDetail?.room?.id }}</p>
+          </div>
           <div class="flex items-center gap-2">
             <button
               *ngIf="isOwner; else leaveButton"
@@ -85,7 +88,7 @@ interface FeedItem {
           <section class="flex h-[560px] flex-col overflow-hidden border border-stone-400 bg-stone-50 p-3">
             <h3 class="mb-3 text-2xl font-medium">Tasks</h3>
 
-            <ul class="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1">
+            <ul #taskList class="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1">
               <li *ngFor="let task of tasks" class="flex items-start justify-between gap-2 text-lg">
                 <label class="flex min-w-0 items-start gap-2">
                   <input type="checkbox" [checked]="task.done" (change)="toggleTaskDone(task)" class="mt-1 h-4 w-4 border-stone-400" />
@@ -98,8 +101,8 @@ interface FeedItem {
             <div class="mt-3 flex gap-2">
               <input
                 [(ngModel)]="newTaskTitle"
-                placeholder="New task"
-                class="min-w-0 flex-1 border border-stone-400 bg-white px-3 py-2 text-sm"
+                placeholder="Add a new task..."
+                class="min-w-0 flex-1 rounded-full border border-stone-400 bg-white px-3 py-2 text-sm"
               />
               <button
                 type="button"
@@ -114,18 +117,14 @@ interface FeedItem {
             <p *ngIf="taskError" class="mt-2 text-sm text-red-700">{{ taskError }}</p>
 
             <section class="mt-3 border border-stone-400 p-2">
-              <p class="mb-2 text-2xl font-medium">Ambient Music</p>
-              <div class="flex flex-wrap items-center gap-2">
-                <button type="button" (click)="onMusicPrimaryAction()" class="rounded-full border border-stone-400 px-3 py-1 text-xs font-semibold hover:bg-stone-200">
-                  {{ musicPrimaryButtonLabel }}
-                </button>
+              <p class="mb-2 text-center text-2xl font-medium">Ambient Music</p>
+              <div class="flex flex-wrap items-center justify-center gap-2">
                 <button
                   type="button"
-                  (click)="toggleMusicMuted()"
-                  [disabled]="!musicEnabled"
+                  (click)="toggleMusicPlayback()"
                   class="rounded-full border border-stone-400 px-3 py-1 text-xs font-semibold hover:bg-stone-200 disabled:opacity-50"
                 >
-                  {{ musicMuted ? 'Unmute' : 'Mute' }}
+                  {{ musicPlaying ? 'Pause Music' : 'Play Music' }}
                 </button>
                 <input
                   id="music-volume"
@@ -135,19 +134,18 @@ interface FeedItem {
                   step="0.01"
                   [ngModel]="musicVolume"
                   (ngModelChange)="onMusicVolumeChange($event)"
-                  [disabled]="!musicEnabled"
                   class="w-24 accent-teal-700"
                 />
                 <span class="text-xs">{{ musicVolumePercent }}%</span>
               </div>
-              <p *ngIf="musicAutoplayBlocked" class="mt-1 text-xs text-stone-700">Browser autoplay is blocked. Click Play Music.</p>
+              <p *ngIf="musicAutoplayBlocked" class="mt-1 text-center text-xs text-stone-700">Browser autoplay is blocked. Click Play Music to start audio.</p>
             </section>
           </section>
 
           <section class="flex h-[560px] flex-col overflow-hidden border border-stone-400 bg-stone-50 p-3">
             <h3 class="mb-2 text-2xl font-medium">Chat</h3>
 
-            <ul class="min-h-0 flex-1 space-y-1 overflow-y-auto border border-stone-300 bg-white p-2 text-sm">
+            <ul #chatFeed class="min-h-0 flex-1 space-y-1 overflow-y-auto border border-stone-300 bg-white p-2 text-sm">
               <li *ngFor="let item of feedItems; trackBy: trackFeedItem" class="break-words">
                 <ng-container *ngIf="item.type === 'chat'; else systemMessage">
                   <span class="font-semibold" [class.text-teal-700]="item.own">{{ item.sender }}:</span>
@@ -181,13 +179,13 @@ interface FeedItem {
 
           <section class="flex h-[560px] flex-col gap-3 overflow-hidden border border-stone-400 bg-stone-50 p-3">
             <div class="border border-stone-400 bg-white p-3">
-              <h3 class="mb-2 text-2xl font-medium">Timer</h3>
+              <h3 class="mb-2 text-center text-2xl font-medium">Timer</h3>
               <p class="w-full text-center text-6xl font-semibold leading-none tracking-wide text-stone-900">{{ formatElapsed(displayRemainingSeconds).slice(3) }}</p>
               <p class="mt-2 text-center text-sm font-semibold tracking-wide text-stone-700">{{ timerState.isRunning ? 'RUNNING' : 'PAUSED' }}</p>
-              <p class="mt-3 text-sm uppercase tracking-wide">Current Phase: {{ pomodoroPhase }}</p>
+              <p class="mt-3 text-sm uppercase tracking-wide"><strong>Current Phase: {{ pomodoroPhase }}</strong></p>
               <p class="text-sm uppercase tracking-wide">Next Phase: {{ pomodoroPhase === 'FOCUS' ? 'BREAK' : 'FOCUS' }}</p>
 
-              <div class="mt-3 flex flex-nowrap gap-2">
+              <div *ngIf="canControlTimer" class="mt-3 flex flex-nowrap gap-2">
                 <button
                   type="button"
                   (click)="startTimer()"
@@ -213,16 +211,15 @@ interface FeedItem {
                   RESET
                 </button>
               </div>
-              <p *ngIf="!canControlTimer" class="mt-2 text-xs text-stone-700">Only the room owner can control the timer.</p>
               <p *ngIf="timerError" class="mt-2 text-xs text-red-700">{{ timerError }}</p>
             </div>
 
             <div class="flex min-h-0 flex-1 flex-col overflow-hidden border border-stone-400 bg-white p-3">
-              <h3 class="mb-2 text-2xl font-medium">Participants</h3>
+              <h3 class="mb-2 text-center text-2xl font-medium">Participants</h3>
               <ul class="min-h-0 flex-1 space-y-1 overflow-y-auto text-2xl leading-tight">
                 <li *ngFor="let member of roomDetail?.members">{{ member.displayName }}</li>
               </ul>
-              <p class="mt-2 text-right text-sm text-stone-700">Members {{ roomDetail?.members?.length || 0 }}</p>
+              <p class="mt-2 text-right text-sm text-stone-700">Members: {{ roomDetail?.members?.length || 0 }}</p>
             </div>
           </section>
         </div>
@@ -231,6 +228,9 @@ interface FeedItem {
   `
 })
 export class StudyRoomComponent implements OnInit, OnDestroy {
+  @ViewChild('chatFeed') private chatFeedRef?: ElementRef<HTMLUListElement>;
+  @ViewChild('taskList') private taskListRef?: ElementRef<HTMLUListElement>;
+
   entryState: 'loading' | 'ready' | 'forbidden' | 'not-found' | 'error' = 'loading';
   entryError = '';
   joining = false;
@@ -251,8 +251,7 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
   leaveError = '';
   pomodoroPhase: 'FOCUS' | 'BREAK' = 'FOCUS';
   displayRemainingSeconds = 1500;
-  musicEnabled = true;
-  musicMuted = false;
+  musicPlaying = false;
   musicVolume = 0.35;
   musicAutoplayBlocked = false;
   timerState: TimerStateResponse = {
@@ -303,9 +302,9 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     }
 
     this.taskApi.createTask(this.roomId, title).subscribe({
-      next: task => {
+      next: () => {
         this.newTaskTitle = '';
-        this.applyTaskUpdate('added', task);
+        this.loadTasks();
       },
       error: err => {
         this.taskError = err?.error?.message ?? 'Unable to create task.';
@@ -346,6 +345,7 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     this.pendingChatMessage = body;
     this.wsService.sendChat(this.roomId, body);
     this.chatMessage = '';
+    this.scheduleChatScrollToBottom();
   }
 
   leaveRoom(): void {
@@ -449,39 +449,13 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     return Math.round(this.musicVolume * 100);
   }
 
-  get musicPrimaryButtonLabel(): string {
-    if (!this.musicEnabled || this.musicAutoplayBlocked) {
-      return 'Play Music';
+  toggleMusicPlayback(): void {
+    if (this.musicPlaying) {
+      this.musicPlaying = false;
+    } else {
+      this.musicPlaying = true;
     }
-    return 'Stop Music';
-  }
-
-  onMusicPrimaryAction(): void {
-    if (!this.musicEnabled) {
-      this.musicEnabled = true;
-      this.musicAutoplayBlocked = false;
-      this.syncMusicPlayback();
-      this.persistMusicPreferences();
-      return;
-    }
-
-    if (this.musicAutoplayBlocked) {
-      this.syncMusicPlayback();
-      return;
-    }
-
-    this.musicEnabled = false;
-    this.musicAutoplayBlocked = false;
     this.syncMusicPlayback();
-    this.persistMusicPreferences();
-  }
-
-  toggleMusicMuted(): void {
-    this.musicMuted = !this.musicMuted;
-    this.applyAudioSettings();
-    if (this.musicEnabled && this.musicAutoplayBlocked) {
-      this.syncMusicPlayback();
-    }
     this.persistMusicPreferences();
   }
 
@@ -493,7 +467,7 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
 
     this.musicVolume = Math.min(1, Math.max(0, parsed));
     this.applyAudioSettings();
-    if (this.musicEnabled && this.musicAutoplayBlocked) {
+    if (this.musicAutoplayBlocked) {
       this.syncMusicPlayback();
     }
     this.persistMusicPreferences();
@@ -538,8 +512,9 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     this.roomApi.listMessages(this.roomId).subscribe(messages => {
       this.messageHistory = messages;
       this.feedItems = messages.map((message, index) => this.toFeedChatItem(message, index));
+      this.scheduleChatScrollToBottom();
     });
-    this.taskApi.listTasks(this.roomId).subscribe(tasks => (this.tasks = tasks));
+    this.loadTasks();
 
     this.wsService.connect(this.roomId);
     this.wsSubscription = this.wsService.events$.subscribe(event => {
@@ -547,6 +522,7 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
 
         if (event.type === 'timer_update') {
           this.pushSystemFeed(this.formatFeedLine(event));
+          this.scheduleChatScrollToBottom();
           const payload = event.payload;
           this.applyTimerState({
             isRunning: payload.isRunning,
@@ -558,11 +534,13 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
           });
         } else if (event.type === 'task_update') {
           this.pushSystemFeed(this.formatFeedLine(event));
+          this.scheduleChatScrollToBottom();
           const payload = event.payload;
           const action = payload.action;
           const task = payload.task;
           if (task) {
             this.applyTaskUpdate(action, task);
+            this.scheduleTaskScrollToBottom();
           }
         } else if (event.type === 'chat_message') {
           const message: RoomMessage = {
@@ -578,8 +556,10 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
           }
           this.messageHistory = [...this.messageHistory, message];
           this.feedItems = [...this.feedItems, this.toFeedChatItem(message, this.feedItems.length)].slice(-300);
+          this.scheduleChatScrollToBottom();
         } else {
           this.pushSystemFeed(this.formatFeedLine(event));
+          this.scheduleChatScrollToBottom();
         }
     });
 
@@ -642,6 +622,10 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
   }
 
   private applyTaskUpdate(action: string, task: Task): void {
+    if (task.roomId !== this.roomId) {
+      return;
+    }
+
     if (action === 'deleted') {
       this.tasks = this.tasks.filter(existing => existing.id !== task.id);
       return;
@@ -655,6 +639,18 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     } else {
       this.tasks = [...this.tasks, task];
     }
+  }
+
+  private loadTasks(): void {
+    this.taskApi.listTasks(this.roomId).subscribe({
+      next: tasks => {
+        this.tasks = tasks.filter(task => task.roomId === this.roomId);
+        this.scheduleTaskScrollToBottom();
+      },
+      error: err => {
+        this.taskError = err?.error?.message ?? 'Unable to load tasks.';
+      }
+    });
   }
 
   private formatFeedLine(event: RoomEvent): string {
@@ -763,15 +759,18 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
 
     this.applyAudioSettings();
 
-    if (!this.musicEnabled) {
+    if (!this.musicPlaying) {
       this.ambientAudio.pause();
+      this.musicAutoplayBlocked = false;
       return;
     }
 
     this.ambientAudio.play().then(() => {
       this.musicAutoplayBlocked = false;
+      this.musicPlaying = true;
     }).catch(() => {
       this.musicAutoplayBlocked = true;
+      this.musicPlaying = false;
     });
   }
 
@@ -780,7 +779,6 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.ambientAudio.muted = this.musicMuted;
     this.ambientAudio.volume = this.musicVolume;
   }
 
@@ -792,17 +790,9 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
       }
 
       const parsed = JSON.parse(raw) as {
-        enabled?: boolean;
-        muted?: boolean;
         volume?: number;
       };
 
-      if (typeof parsed.enabled === 'boolean') {
-        this.musicEnabled = parsed.enabled;
-      }
-      if (typeof parsed.muted === 'boolean') {
-        this.musicMuted = parsed.muted;
-      }
       if (typeof parsed.volume === 'number') {
         this.musicVolume = Math.min(1, Math.max(0, parsed.volume));
       }
@@ -813,11 +803,37 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
 
   private persistMusicPreferences(): void {
     const payload = {
-      enabled: this.musicEnabled,
-      muted: this.musicMuted,
       volume: this.musicVolume
     };
     localStorage.setItem(this.musicPreferenceKey(), JSON.stringify(payload));
+  }
+
+  private scheduleChatScrollToBottom(): void {
+    this.runAfterRender(() => {
+      const el = this.chatFeedRef?.nativeElement;
+      if (!el) {
+        return;
+      }
+      el.scrollTop = el.scrollHeight;
+    });
+  }
+
+  private scheduleTaskScrollToBottom(): void {
+    this.runAfterRender(() => {
+      const el = this.taskListRef?.nativeElement;
+      if (!el) {
+        return;
+      }
+      el.scrollTop = el.scrollHeight;
+    });
+  }
+
+  private runAfterRender(action: () => void): void {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        action();
+      });
+    });
   }
 
   private musicPreferenceKey(): string {
