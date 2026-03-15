@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Virtual Study Room – TEST</title>
+</head>
+<body>
+<h1>Virtual Study Room TEST</h1>
+
+<h2>Rooms</h2>
+<button onclick="loadRooms()">Load Rooms</button>
+
+<ul id="roomList"></ul>
+
+<input id="newRoomName" placeholder="New room name">
+<button onclick="createRoom()">Create Room</button>
+
+<hr>
+
+<h2>WebSocket Test</h2>
+<button onclick="connectWs()">Connect WebSocket</button>
+<button onclick="sendWsTest()">Send Test Message</button>
+
+<ul id="wsLog"></ul>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@6.1.2/bundles/stomp.umd.min.js"></script>
+
+<script>
+    const apiBase = "/api";
+    let wsClient;
+
+    function loadRooms() {
+        fetch(apiBase + "/rooms")
+            .then(r => r.json())
+            .then(rooms => {
+                const ul = document.getElementById("roomList");
+                ul.innerHTML = "";
+                rooms.forEach(room => {
+                    const li = document.createElement("li");
+                    li.textContent = `${room.id} – ${room.name}`;
+                    ul.appendChild(li);
+                });
+            });
+    }
+
+    function createRoom() {
+        const name = document.getElementById("newRoomName").value;
+        fetch(apiBase + "/rooms", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name })
+        }).then(() => {
+            document.getElementById("newRoomName").value = "";
+            loadRooms();
+        });
+    }
+
+    // WebSocket
+    function connectWs() {
+        const socket = new SockJS('/ws');
+        wsClient = StompJs.Stomp.over(socket);
+
+        wsClient.connect({}, () => {
+            logWs("Connected to WebSocket");
+
+            wsClient.subscribe('/topic/test', msg => {
+                logWs("Received: " + msg.body);
+            });
+        });
+    }
+
+    function sendWsTest() {
+        wsClient.send("/app/test", {}, "Hello from Static HTML");
+    }
+
+    function logWs(text) {
+        const ul = document.getElementById("wsLog");
+        const li = document.createElement("li");
+        li.textContent = text;
+        ul.appendChild(li);
+    }
+</script>
+
+</body>
+</html>

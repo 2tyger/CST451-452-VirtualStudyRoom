@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	body {
+		@apply m-0 bg-stone-200 text-stone-900;
+		font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+	}
+
+	button {
+		@apply transition-colors;
+	}
+
+	input,
+	textarea {
+		@apply outline-none;
+	}
+}
