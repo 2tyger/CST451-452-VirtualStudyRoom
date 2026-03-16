@@ -1,3 +1,6 @@
+/*
+handles api requests for this domain and delegates work to services
+*/
 package com.tygilbert.virtualstudyroom.controller;
 
 import java.util.List;
@@ -32,6 +35,7 @@ public class MessageController {
         this.chatService = chatService;
     }
 
+    // returns room chat history for authorized members
     @GetMapping
     public List<MessageResponse> listMessages(@PathVariable Long roomId,
                                               @RequestParam(defaultValue = "50") int limit,
@@ -39,6 +43,7 @@ public class MessageController {
         return messageService.listMessages(roomId, authentication.getName(), limit);
     }
 
+    // saves a chat message and publishes it to room subscribers
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public MessageResponse sendMessage(@PathVariable Long roomId,
@@ -47,3 +52,4 @@ public class MessageController {
         return chatService.saveAndPublishChat(roomId, command.body(), authentication.getName());
     }
 }
+

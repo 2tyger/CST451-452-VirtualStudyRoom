@@ -1,3 +1,6 @@
+/*
+provides data access methods for this entity and query patterns
+*/
 package com.tygilbert.virtualstudyroom.repository;
 
 import java.util.List;
@@ -13,3 +16,4 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     Page<Message> findByRoomId(Long roomId, Pageable pageable);
     void deleteByRoomId(Long roomId);
 }
+

@@ -1,3 +1,6 @@
+/*
+wraps frontend api or websocket communication for feature components
+*/
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
@@ -14,24 +17,28 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
+  // sends login credentials and persists the returned auth session
   login(payload: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiBase}/login`, payload).pipe(
       tap(response => this.persistSession(response))
     );
   }
 
+  // sends registration data and persists the returned auth session
   register(payload: RegisterRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiBase}/register`, payload).pipe(
       tap(response => this.persistSession(response))
     );
   }
 
+  // clears local auth session state
   logout(): void {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
     this.authStateSubject.next(false);
   }
 
+  // returns a valid token or clears invalid session state
   getToken(): string | null {
     const token = localStorage.getItem(this.tokenKey);
     if (!token) {
@@ -104,3 +111,4 @@ export class AuthService {
     return JSON.parse(json) as { exp?: number | string };
   }
 }
+

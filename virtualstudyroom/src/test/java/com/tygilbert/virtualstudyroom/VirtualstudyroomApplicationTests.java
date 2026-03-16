@@ -1,3 +1,6 @@
+/*
+contains automated tests for backend behavior and regression checks
+*/
 package com.tygilbert.virtualstudyroom;
 
 import org.junit.jupiter.api.Disabled;
@@ -16,3 +19,5 @@ class VirtualstudyroomApplicationTests {
 	}
 
 }
+
+

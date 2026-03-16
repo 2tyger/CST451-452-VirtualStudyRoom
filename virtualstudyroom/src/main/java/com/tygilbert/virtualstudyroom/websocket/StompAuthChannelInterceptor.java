@@ -1,3 +1,6 @@
+/*
+handles websocket authentication and room realtime message entry points
+*/
 package com.tygilbert.virtualstudyroom.websocket;
 
 import java.util.List;
@@ -60,3 +63,4 @@ public class StompAuthChannelInterceptor implements ChannelInterceptor {
         return message;
     }
 }
+

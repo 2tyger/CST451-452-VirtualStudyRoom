@@ -1,3 +1,6 @@
+/*
+contains frontend service smoke tests for api request wiring
+*/
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { RoomApiService } from './room-api.service';
@@ -31,3 +34,5 @@ describe('RoomApiService', () => {
     req.flush([]);
   });
 });
+
+

@@ -1,3 +1,6 @@
+/*
+handles websocket authentication and room realtime message entry points
+*/
 package com.tygilbert.virtualstudyroom.websocket;
 
 import java.security.Principal;
@@ -22,12 +25,14 @@ public class RoomWebSocketController {
         this.chatService = chatService;
     }
 
+    // accepts room chat send commands from websocket clients
     @MessageMapping("/rooms/{roomId}/chat.send")
     public void sendChat(@DestinationVariable Long roomId, ChatSendCommand command, Principal principal) {
         String email = principal != null ? principal.getName() : null;
         chatService.saveAndPublishChat(roomId, command.body(), email);
     }
 
+    // maps service errors to user scoped websocket error payloads
     @MessageExceptionHandler(ResponseStatusException.class)
     @SendToUser("/queue/errors")
     public WsErrorPayload handleChatException(ResponseStatusException exception) {
@@ -40,3 +45,4 @@ public class RoomWebSocketController {
         return new WsErrorPayload(code, message);
     }
 }
+

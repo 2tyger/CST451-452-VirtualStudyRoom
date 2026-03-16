@@ -1,3 +1,6 @@
+/*
+handles api requests for this domain and delegates work to services
+*/
 package com.tygilbert.virtualstudyroom.controller;
 
 import java.util.List;
@@ -34,11 +37,13 @@ public class TaskController {
         this.realtimeEventService = realtimeEventService;
     }
 
+    // returns all tasks for a room when the user is a member
     @GetMapping
     public List<TaskResponse> listTasks(@PathVariable Long roomId, Authentication authentication) {
         return taskService.listTasks(roomId, authentication.getName());
     }
 
+    // creates a task and publishes a realtime task added event
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public TaskResponse addTask(@PathVariable Long roomId,
@@ -49,6 +54,7 @@ public class TaskController {
         return task;
     }
 
+    // updates task fields and publishes a realtime task updated event
     @PatchMapping("/{taskId}")
     public TaskResponse updateTask(@PathVariable Long roomId,
                                    @PathVariable Long taskId,
@@ -59,6 +65,7 @@ public class TaskController {
         return task;
     }
 
+    // deletes a task and publishes a realtime task deleted event
     @DeleteMapping("/{taskId}")
     public TaskResponse deleteTask(@PathVariable Long roomId,
                                    @PathVariable Long taskId,
@@ -68,3 +75,4 @@ public class TaskController {
         return task;
     }
 }
+

@@ -1,3 +1,6 @@
+/*
+defines websocket event contracts and payload shapes used by realtime messaging
+*/
 package com.tygilbert.virtualstudyroom.dto.ws;
 
 import jakarta.validation.constraints.NotBlank;
@@ -7,3 +10,4 @@ public record ChatSendCommand(
         @NotBlank @Size(max = 2000) String body
 ) {
 }
+

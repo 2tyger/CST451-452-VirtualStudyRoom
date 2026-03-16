@@ -1,3 +1,6 @@
+/*
+defines a persisted entity and maps fields to database columns
+*/
 package com.tygilbert.virtualstudyroom.entity;
 
 import java.time.OffsetDateTime;
@@ -53,3 +56,4 @@ public class User {
     public OffsetDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
 }
+

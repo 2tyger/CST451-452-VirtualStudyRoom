@@ -1,3 +1,6 @@
+/*
+configures framework behavior for security websocket and application wiring
+*/
 package com.tygilbert.virtualstudyroom.config;
 
 import com.tygilbert.virtualstudyroom.security.JwtAuthenticationFilter;
@@ -74,3 +77,4 @@ public class SecurityConfig {
         return source;
     }
 }
+

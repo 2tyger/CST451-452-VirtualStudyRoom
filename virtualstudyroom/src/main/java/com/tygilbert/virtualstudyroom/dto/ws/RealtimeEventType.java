@@ -1,3 +1,6 @@
+/*
+defines websocket event contracts and payload shapes used by realtime messaging
+*/
 package com.tygilbert.virtualstudyroom.dto.ws;
 
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -18,3 +21,4 @@ public enum RealtimeEventType {
         return wireValue;
     }
 }
+

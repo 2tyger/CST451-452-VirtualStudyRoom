@@ -1,3 +1,6 @@
+/*
+verifies service behavior and edge cases for this module
+*/
 package com.tygilbert.virtualstudyroom.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,3 +28,5 @@ class RateLimitServiceTest {
         assertTrue(ex.getReason() != null && ex.getReason().contains("Too many chat messages sent"));
     }
 }
+
+

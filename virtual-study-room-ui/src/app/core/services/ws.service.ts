@@ -1,3 +1,6 @@
+/*
+wraps frontend api or websocket communication for feature components
+*/
 import { Injectable } from '@angular/core';
 import { Client, IFrame, IMessage } from '@stomp/stompjs';
 import { Subject } from 'rxjs';
@@ -16,6 +19,7 @@ export class WsService {
 
   constructor(private authService: AuthService) {}
 
+  // opens websocket connection and subscribes to room and user error channels
   connect(roomId: number): void {
     if (this.client?.connected) {
       return;
@@ -49,6 +53,7 @@ export class WsService {
     this.client.activate();
   }
 
+  // publishes a chat command to the room websocket endpoint
   sendChat(roomId: number, body: string): void {
     this.client?.publish({
       destination: `/app/rooms/${roomId}/chat.send`,
@@ -56,6 +61,7 @@ export class WsService {
     });
   }
 
+  // closes websocket connection when room view is torn down
   disconnect(): void {
     this.client?.deactivate();
     this.client = undefined;
@@ -71,6 +77,7 @@ export class WsService {
     };
   }
 
+  // parses incoming websocket payloads into typed room events
   private parseRoomEvent(rawBody: string, roomId: number): RoomEvent {
     try {
       const parsed = JSON.parse(rawBody) as Record<string, unknown>;
@@ -87,6 +94,7 @@ export class WsService {
     }
   }
 
+  // maps websocket event envelope values to typed frontend event models
   private toTypedEvent(parsed: Record<string, unknown>, fallbackRoomId: number): RoomEvent {
     const type = String(parsed['type'] ?? 'raw');
     const roomId = Number(parsed['roomId'] ?? fallbackRoomId);
@@ -174,6 +182,7 @@ export class WsService {
     };
   }
 
+  // maps stomp error frames to user friendly chat error messages
   private mapStompError(frame: IFrame): string {
     const headerMessage = frame.headers['message'] ?? '';
     const body = frame.body ?? '';
@@ -186,6 +195,7 @@ export class WsService {
     return 'Unable to send chat right now. Please try again.';
   }
 
+  // parses user queue websocket error payloads
   private parseWsErrorMessage(rawBody: string): string {
     try {
       const parsed = JSON.parse(rawBody) as Record<string, unknown>;
@@ -202,3 +212,4 @@ export class WsService {
     }
   }
 }
+

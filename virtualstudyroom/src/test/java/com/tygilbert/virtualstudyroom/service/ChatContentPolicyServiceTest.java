@@ -1,3 +1,6 @@
+/*
+verifies service behavior and edge cases for this module
+*/
 package com.tygilbert.virtualstudyroom.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,3 +44,5 @@ class ChatContentPolicyServiceTest {
         assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
     }
 }
+
+

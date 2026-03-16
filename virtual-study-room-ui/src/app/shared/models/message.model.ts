@@ -1,3 +1,6 @@
+/*
+declares frontend data models shared across services and components
+*/
 export interface RoomMessage {
   id: number;
   roomId: number;
@@ -6,3 +9,4 @@ export interface RoomMessage {
   body: string;
   createdAt: string;
 }
+

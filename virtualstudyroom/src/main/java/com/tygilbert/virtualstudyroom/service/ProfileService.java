@@ -1,3 +1,6 @@
+/*
+contains business logic for this domain and coordinates repository operations
+*/
 package com.tygilbert.virtualstudyroom.service;
 
 import org.springframework.http.HttpStatus;
@@ -17,6 +20,7 @@ public class ProfileService {
     private final PasswordEncoder passwordEncoder;
 
     public ProfileService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    // loads profile data for the authenticated user
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -25,6 +29,7 @@ public class ProfileService {
         User user = getCurrentUser(email);
         return toResponse(user);
     }
+        // updates profile fields and optionally rotates password
 
     public ProfileResponse updateMyProfile(String email, UpdateProfileRequest request) {
         User user = getCurrentUser(email);
@@ -45,12 +50,14 @@ public class ProfileService {
             user.setPasswordHash(passwordEncoder.encode(newPassword));
         }
 
+    // resolves user entity by normalized email
         User saved = userRepository.save(user);
         return toResponse(saved);
     }
 
     private User getCurrentUser(String email) {
         return userRepository.findByEmail(email)
+    // maps user entity to profile response payload
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid user context"));
     }
 
@@ -64,3 +71,4 @@ public class ProfileService {
         );
     }
 }
+

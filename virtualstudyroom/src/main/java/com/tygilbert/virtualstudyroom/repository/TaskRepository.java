@@ -1,3 +1,6 @@
+/*
+provides data access methods for this entity and query patterns
+*/
 package com.tygilbert.virtualstudyroom.repository;
 
 import java.util.List;
@@ -10,3 +13,4 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findByRoomIdOrderByCreatedAtAsc(Long roomId);
     void deleteByRoomId(Long roomId);
 }
+

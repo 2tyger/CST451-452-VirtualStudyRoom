@@ -1,3 +1,6 @@
+/*
+implements authentication and authorization utilities used by spring security
+*/
 package com.tygilbert.virtualstudyroom.security;
 
 import com.tygilbert.virtualstudyroom.repository.UserRepository;
@@ -26,3 +29,4 @@ public class AppUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }
+

@@ -1,3 +1,6 @@
+/*
+defines profile request and response contracts for profile endpoints
+*/
 package com.tygilbert.virtualstudyroom.dto.profile;
 
 import java.time.OffsetDateTime;
@@ -10,3 +13,4 @@ public record ProfileResponse(
         OffsetDateTime createdAt
 ) {
 }
+

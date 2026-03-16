@@ -1,3 +1,6 @@
+/*
+defines a persisted entity and maps fields to database columns
+*/
 package com.tygilbert.virtualstudyroom.entity;
 
 import jakarta.persistence.*;
@@ -44,3 +47,4 @@ public class Message {
     public OffsetDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
 }
+

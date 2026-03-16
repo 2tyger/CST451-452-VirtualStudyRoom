@@ -1,3 +1,6 @@
+/*
+contains business logic for this domain and coordinates repository operations
+*/
 package com.tygilbert.virtualstudyroom.service;
 
 import java.time.Duration;
@@ -39,6 +42,7 @@ public class TimerService {
         this.breakDurationSeconds = breakDurationSeconds;
     }
 
+    // advances running rooms to the next phase when phase duration completes
     @Scheduled(fixedDelayString = "${app.pomodoro.auto-advance-ms:1000}")
     public void autoAdvanceRunningTimers() {
         List<Room> runningRooms = roomRepository.findByRunningTrue();
@@ -58,6 +62,7 @@ public class TimerService {
         }
     }
 
+    // starts timer execution for an authorized room owner
     public TimerStateResponse start(Long roomId, String email) {
         Room room = getAuthorizedRoom(roomId, email);
         if (!room.isRunning()) {
@@ -69,6 +74,7 @@ public class TimerService {
         return toTimerState(room);
     }
 
+    // pauses timer execution and normalizes completed paused phases
     public TimerStateResponse pause(Long roomId, String email) {
         Room room = getAuthorizedRoom(roomId, email);
         if (room.isRunning()) {
@@ -82,6 +88,7 @@ public class TimerService {
         return toTimerState(room);
     }
 
+    // resets timer state back to focus phase and zero elapsed time
     public TimerStateResponse reset(Long roomId, String email) {
         Room room = getAuthorizedRoom(roomId, email);
         room.setElapsedSeconds(0);
@@ -92,6 +99,7 @@ public class TimerService {
         return toTimerState(room);
     }
 
+    // returns the computed current timer state for an existing room
     public TimerStateResponse getCurrentState(Room room) {
         return toTimerState(room);
     }
@@ -103,6 +111,7 @@ public class TimerService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found"));
     }
 
+    // computes phase aware timer payload from persisted room state
     private TimerStateResponse toTimerState(Room room) {
         long elapsed = computeElapsedSeconds(room);
         String phase = room.isBreakPhase() ? BREAK_PHASE : FOCUS_PHASE;
@@ -118,6 +127,7 @@ public class TimerService {
         );
     }
 
+    // computes elapsed seconds using start time while running
     private long computeElapsedSeconds(Room room) {
         if (!room.isRunning()) {
             return room.getElapsedSeconds();
@@ -132,6 +142,7 @@ public class TimerService {
         return room.getElapsedSeconds() + runningSeconds;
     }
 
+    // shifts completed paused phases to the next phase before restart
     private void normalizeCompletedPausedPhase(Room room) {
         if (room.isRunning()) {
             return;
@@ -148,3 +159,4 @@ public class TimerService {
         return isBreakPhase ? breakDurationSeconds : focusDurationSeconds;
     }
 }
+

@@ -1,3 +1,6 @@
+/*
+wraps frontend api or websocket communication for feature components
+*/
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -17,3 +20,4 @@ export class ProfileApiService {
     return this.http.put<ProfileResponse>(`${this.apiBase}/me`, payload);
   }
 }
+

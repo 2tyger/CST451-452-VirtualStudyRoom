@@ -1,3 +1,6 @@
+/*
+handles api requests for this domain and delegates work to services
+*/
 package com.tygilbert.virtualstudyroom.controller;
 
 import org.springframework.security.core.Authentication;
@@ -23,14 +26,17 @@ public class ProfileController {
         this.profileService = profileService;
     }
 
+    // returns the authenticated user profile
     @GetMapping("/me")
     public ProfileResponse getMyProfile(Authentication authentication) {
         return profileService.getMyProfile(authentication.getName());
     }
 
+    // updates profile fields for the authenticated user
     @PutMapping("/me")
     public ProfileResponse updateMyProfile(@Valid @RequestBody UpdateProfileRequest request,
                                            Authentication authentication) {
         return profileService.updateMyProfile(authentication.getName(), request);
     }
 }
+

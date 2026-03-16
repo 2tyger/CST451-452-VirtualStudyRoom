@@ -1,3 +1,6 @@
+/*
+declares frontend data models shared across services and components
+*/
 export interface Task {
   id: number;
   roomId: number;
@@ -8,3 +11,4 @@ export interface Task {
   createdAt: string;
   updatedAt: string;
 }
+

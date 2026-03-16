@@ -1,3 +1,6 @@
+/*
+defines a persisted entity and maps fields to database columns
+*/
 package com.tygilbert.virtualstudyroom.entity;
 
 import java.time.Instant;
@@ -72,3 +75,4 @@ public class Room {
     public boolean isBreakPhase() { return breakPhase; }
     public void setBreakPhase(boolean breakPhase) { this.breakPhase = breakPhase; }
 }
+

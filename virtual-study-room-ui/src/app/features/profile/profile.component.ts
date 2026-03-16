@@ -1,3 +1,6 @@
+/*
+renders profile ui and handles profile loading and updates
+*/
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -142,3 +145,4 @@ export class ProfileComponent implements OnInit {
     });
   }
 }
+

@@ -1,3 +1,6 @@
+/*
+declares frontend data models shared across services and components
+*/
 import { Task } from './task.model';
 
 export type SupportedRoomEventType = 'timer_update' | 'task_update' | 'chat_message';
@@ -37,3 +40,4 @@ export type SupportedRoomEvent = TimerUpdateEvent | TaskUpdateEvent | ChatMessag
 export type UnknownRoomEvent = RoomEventBase<'raw', Record<string, unknown>>;
 
 export type RoomEvent = SupportedRoomEvent | UnknownRoomEvent;
+

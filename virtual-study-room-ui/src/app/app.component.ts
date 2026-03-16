@@ -1,3 +1,6 @@
+/*
+application shell component for top level navigation and auth actions
+*/
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
@@ -23,3 +26,5 @@ export class AppComponent {
     this.router.navigate(['/login']);
   }
 }
+
+

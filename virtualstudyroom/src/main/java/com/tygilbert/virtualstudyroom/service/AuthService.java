@@ -1,3 +1,6 @@
+/*
+contains business logic for this domain and coordinates repository operations
+*/
 package com.tygilbert.virtualstudyroom.service;
 
 import com.tygilbert.virtualstudyroom.dto.auth.AuthLoginRequest;
@@ -24,6 +27,7 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
+    // registers a user account and returns jwt session data
     public AuthResponse register(AuthRegisterRequest request) {
         String normalizedEmail = request.email().trim().toLowerCase();
         userRepository.findByEmail(normalizedEmail).ifPresent(existing -> {
@@ -44,6 +48,7 @@ public class AuthService {
         );
     }
 
+    // validates credentials and returns jwt session data
     public AuthResponse login(AuthLoginRequest request) {
         String normalizedEmail = request.email().trim().toLowerCase();
         User user = userRepository.findByEmail(normalizedEmail)
@@ -61,3 +66,4 @@ public class AuthService {
         );
     }
 }
+

@@ -1,3 +1,6 @@
+/*
+defines authentication request and response contracts used by the api
+*/
 package com.tygilbert.virtualstudyroom.dto.auth;
 
 public record AuthResponse(
@@ -7,3 +10,4 @@ public record AuthResponse(
         String displayName
 ) {
 }
+

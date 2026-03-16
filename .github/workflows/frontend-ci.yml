@@ -1,3 +1,4 @@
+# runs frontend tests and build in github actions for pull requests and pushes
 name: Frontend CI
 
 on:
@@ -38,3 +39,5 @@ jobs:
 
       - name: Build frontend
         run: npm run build
+
+

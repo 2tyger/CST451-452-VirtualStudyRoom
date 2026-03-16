@@ -1,3 +1,6 @@
+/*
+contains business logic for this domain and coordinates repository operations
+*/
 package com.tygilbert.virtualstudyroom.service;
 
 import org.springframework.http.HttpStatus;
@@ -35,6 +38,7 @@ public class ChatService {
         this.chatContentPolicyService = chatContentPolicyService;
     }
 
+    // validates saves and publishes a chat message for a room member
     public MessageResponse saveAndPublishChat(Long roomId, String body, String email) {
         if (email == null || email.isBlank()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid user context");
@@ -70,3 +74,4 @@ public class ChatService {
         );
     }
 }
+

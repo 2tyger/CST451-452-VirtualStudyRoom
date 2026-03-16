@@ -1,3 +1,6 @@
+/*
+declares route mappings and guard rules for frontend navigation
+*/
 import { Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/login.component';
 import { RegisterComponent } from './features/auth/register.component';
@@ -16,3 +19,5 @@ export const routes: Routes = [
 	{ path: 'rooms/:roomId', component: StudyRoomComponent, canActivate: [authGuard] },
 	{ path: '**', redirectTo: 'dashboard' }
 ];
+
+

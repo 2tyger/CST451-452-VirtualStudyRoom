@@ -1,3 +1,6 @@
+/*
+defines a persisted entity and maps fields to database columns
+*/
 package com.tygilbert.virtualstudyroom.entity;
 
 import jakarta.persistence.*;
@@ -67,3 +70,4 @@ public class Task {
     public OffsetDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(OffsetDateTime updatedAt) { this.updatedAt = updatedAt; }
 }
+

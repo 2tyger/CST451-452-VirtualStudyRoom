@@ -1,3 +1,6 @@
+/*
+defines websocket event contracts and payload shapes used by realtime messaging
+*/
 package com.tygilbert.virtualstudyroom.dto.ws;
 
 import java.time.Instant;
@@ -14,3 +17,4 @@ public record TimerUpdatePayload(
         long remainingSeconds
 ) {
 }
+

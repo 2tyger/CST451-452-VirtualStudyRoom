@@ -1,3 +1,4 @@
+// configures frontend test runner browsers and ci execution options
 module.exports = function (config) {
   config.set({
     basePath: '',
@@ -37,3 +38,5 @@ module.exports = function (config) {
     restartOnFileChange: true
   });
 };
+
+

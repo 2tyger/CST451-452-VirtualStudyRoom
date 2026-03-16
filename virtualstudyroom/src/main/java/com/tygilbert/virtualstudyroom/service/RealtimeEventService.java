@@ -1,3 +1,6 @@
+/*
+contains business logic for this domain and coordinates repository operations
+*/
 package com.tygilbert.virtualstudyroom.service;
 
 import java.time.OffsetDateTime;
@@ -22,6 +25,7 @@ public class RealtimeEventService {
         this.messagingTemplate = messagingTemplate;
     }
 
+    // publishes timer state updates to the room topic
     public void publishTimerUpdate(Long roomId, TimerStateResponse state) {
         TimerUpdatePayload payload = new TimerUpdatePayload(
                 state.isRunning(),
@@ -34,14 +38,17 @@ public class RealtimeEventService {
         publish(roomId, RealtimeEventType.TIMER_UPDATE, payload);
     }
 
+    // publishes task action updates to the room topic
     public void publishTaskUpdate(Long roomId, String action, TaskResponse task) {
         publish(roomId, RealtimeEventType.TASK_UPDATE, new TaskUpdatePayload(action, task));
     }
 
+    // publishes chat messages to the room topic
     public void publishChatMessage(Long roomId, String sender, String body) {
         publish(roomId, RealtimeEventType.CHAT_MESSAGE, new ChatMessagePayload(sender, body));
     }
 
+    // wraps payloads in a shared realtime event envelope and sends to room topic
     private <T> void publish(Long roomId, RealtimeEventType type, T payload) {
         RoomEventDto<T> event = new RoomEventDto<>(
                 type,
@@ -56,3 +63,4 @@ public class RealtimeEventService {
         return "/topic/rooms/" + roomId;
     }
 }
+

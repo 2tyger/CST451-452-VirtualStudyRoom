@@ -1,3 +1,6 @@
+/*
+contains business logic for this domain and coordinates repository operations
+*/
 package com.tygilbert.virtualstudyroom.service;
 
 import java.util.List;
@@ -47,6 +50,7 @@ public class RoomService {
         this.messageRepository = messageRepository;
     }
 
+    // returns membership scoped rooms for the current user
     public List<RoomResponse> listRoomsForUser(String email) {
         User user = getCurrentUser(email);
         return roomMemberRepository.findByUserId(user.getId()).stream()
@@ -55,6 +59,7 @@ public class RoomService {
                 .toList();
     }
 
+    // creates a room and adds owner membership
     public RoomResponse createRoom(CreateRoomRequest request, String email) {
         User owner = getCurrentUser(email);
         rateLimitService.enforceRoomCreateLimit(owner.getId());
@@ -73,6 +78,7 @@ public class RoomService {
         return toRoomResponse(saved);
     }
 
+    // loads room details and member list for authorized users
     public RoomDetailResponse getRoom(@NonNull Long roomId, String email) {
         User user = getCurrentUser(email);
         Long userId = Objects.requireNonNull(user.getId(), "Current user id is required");
@@ -92,6 +98,7 @@ public class RoomService {
         return new RoomDetailResponse(toRoomResponse(room), members);
     }
 
+    // joins a room as member when the link does not already exist
     public RoomResponse joinRoom(@NonNull Long roomId, String email) {
         User user = getCurrentUser(email);
         Room room = roomRepository.findById(roomId)
@@ -108,6 +115,7 @@ public class RoomService {
         return toRoomResponse(room);
     }
 
+    // leaves a room for non owner members
     public RoomResponse leaveRoom(@NonNull Long roomId, String email) {
         User user = getCurrentUser(email);
         Room room = roomRepository.findById(roomId)
@@ -127,6 +135,7 @@ public class RoomService {
         return toRoomResponse(room);
     }
 
+    // deletes a room and dependent member task and message records
     @Transactional
     public void deleteRoom(@NonNull Long roomId, String email) {
         User user = getCurrentUser(email);
@@ -143,12 +152,14 @@ public class RoomService {
         roomRepository.delete(room);
     }
 
+    // enforces that a user is currently a member of the room
     public void ensureMembership(@NonNull Long roomId, @NonNull Long userId) {
         if (!roomMemberRepository.existsByRoomIdAndUserId(roomId, userId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not a room member");
         }
     }
 
+    // enforces owner role for sensitive room actions
     public void ensureOwnerRole(@NonNull Long roomId, @NonNull Long userId) {
         RoomMember membership = roomMemberRepository.findByRoomIdAndUserId(roomId, userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Not a room member"));
@@ -158,6 +169,7 @@ public class RoomService {
         }
     }
 
+    // resolves the current user entity from the authenticated email
     public User getCurrentUser(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid user context"));
@@ -178,3 +190,4 @@ public class RoomService {
         );
     }
 }
+

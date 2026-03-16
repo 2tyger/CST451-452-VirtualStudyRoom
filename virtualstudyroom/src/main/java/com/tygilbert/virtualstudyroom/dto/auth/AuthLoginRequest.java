@@ -1,3 +1,6 @@
+/*
+defines authentication request and response contracts used by the api
+*/
 package com.tygilbert.virtualstudyroom.dto.auth;
 
 import jakarta.validation.constraints.Email;
@@ -8,3 +11,4 @@ public record AuthLoginRequest(
         @NotBlank String password
 ) {
 }
+

@@ -1,3 +1,6 @@
+/*
+implements authentication and authorization utilities used by spring security
+*/
 package com.tygilbert.virtualstudyroom.security;
 
 import io.jsonwebtoken.Claims;
@@ -57,3 +60,4 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }
+

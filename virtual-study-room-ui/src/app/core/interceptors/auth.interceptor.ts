@@ -1,3 +1,6 @@
+/*
+http interceptor that appends auth context to backend api requests
+*/
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
@@ -18,3 +21,4 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(authReq);
 };
+

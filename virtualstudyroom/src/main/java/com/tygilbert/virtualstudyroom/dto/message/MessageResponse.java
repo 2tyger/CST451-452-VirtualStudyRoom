@@ -1,3 +1,6 @@
+/*
+defines message response contracts for room chat history and send operations
+*/
 package com.tygilbert.virtualstudyroom.dto.message;
 
 import java.time.OffsetDateTime;
@@ -11,3 +14,4 @@ public record MessageResponse(
         OffsetDateTime createdAt
 ) {
 }
+

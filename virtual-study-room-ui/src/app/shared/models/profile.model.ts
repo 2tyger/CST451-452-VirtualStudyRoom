@@ -1,3 +1,6 @@
+/*
+declares frontend data models shared across services and components
+*/
 export interface ProfileResponse {
   userId: number;
   email: string;
@@ -12,3 +15,4 @@ export interface UpdateProfileRequest {
   bio?: string;
   newPassword?: string;
 }
+

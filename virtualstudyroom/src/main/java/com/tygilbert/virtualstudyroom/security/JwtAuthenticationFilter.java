@@ -1,3 +1,6 @@
+/*
+implements authentication and authorization utilities used by spring security
+*/
 package com.tygilbert.virtualstudyroom.security;
 
 import jakarta.servlet.FilterChain;
@@ -54,3 +57,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
+

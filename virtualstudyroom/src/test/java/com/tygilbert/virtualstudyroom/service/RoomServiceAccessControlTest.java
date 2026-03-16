@@ -1,3 +1,6 @@
+/*
+verifies service behavior and edge cases for this module
+*/
 package com.tygilbert.virtualstudyroom.service;
 
 import java.util.Optional;
@@ -104,3 +107,5 @@ class RoomServiceAccessControlTest {
         assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
     }
 }
+
+

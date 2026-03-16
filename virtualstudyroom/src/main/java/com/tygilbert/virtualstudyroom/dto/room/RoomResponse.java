@@ -1,3 +1,6 @@
+/*
+defines room request and response contracts shared across api layers
+*/
 package com.tygilbert.virtualstudyroom.dto.room;
 
 import java.time.Instant;
@@ -16,3 +19,4 @@ public record RoomResponse(
         OffsetDateTime createdAt
 ) {
 }
+

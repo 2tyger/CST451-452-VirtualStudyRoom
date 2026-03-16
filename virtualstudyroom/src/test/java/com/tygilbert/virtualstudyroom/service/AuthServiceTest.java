@@ -1,3 +1,6 @@
+/*
+verifies service behavior and edge cases for this module
+*/
 package com.tygilbert.virtualstudyroom.service;
 
 import java.util.Optional;
@@ -94,3 +97,5 @@ class AuthServiceTest {
         assertEquals(HttpStatus.UNAUTHORIZED, ex.getStatusCode());
     }
 }
+
+

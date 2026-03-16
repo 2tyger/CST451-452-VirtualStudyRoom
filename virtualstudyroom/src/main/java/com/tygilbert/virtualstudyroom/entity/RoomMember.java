@@ -1,3 +1,6 @@
+/*
+defines a persisted entity and maps fields to database columns
+*/
 package com.tygilbert.virtualstudyroom.entity;
 
 import jakarta.persistence.*;
@@ -46,3 +49,4 @@ public class RoomMember {
     public OffsetDateTime getJoinedAt() { return joinedAt; }
     public void setJoinedAt(OffsetDateTime joinedAt) { this.joinedAt = joinedAt; }
 }
+

@@ -1,3 +1,6 @@
+/*
+contains business logic for this domain and coordinates repository operations
+*/
 package com.tygilbert.virtualstudyroom.service;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -46,3 +49,4 @@ public class ChatContentPolicyService {
         return builder.toString();
     }
 }
+

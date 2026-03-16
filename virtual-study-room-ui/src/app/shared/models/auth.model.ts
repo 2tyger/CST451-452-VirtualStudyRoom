@@ -1,3 +1,6 @@
+/*
+declares frontend data models shared across services and components
+*/
 export interface AuthResponse {
   token: string;
   userId: number;
@@ -13,3 +16,4 @@ export interface LoginRequest {
 export interface RegisterRequest extends LoginRequest {
   displayName: string;
 }
+

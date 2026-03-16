@@ -1,3 +1,6 @@
+/*
+contains basic smoke tests for app bootstrap and shell rendering
+*/
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { AppComponent } from './app.component';
@@ -37,3 +40,5 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('virtual-study-room-ui');
   });
 });
+
+

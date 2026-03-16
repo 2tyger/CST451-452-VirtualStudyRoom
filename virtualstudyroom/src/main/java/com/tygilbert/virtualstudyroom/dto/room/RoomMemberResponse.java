@@ -1,3 +1,6 @@
+/*
+defines room request and response contracts shared across api layers
+*/
 package com.tygilbert.virtualstudyroom.dto.room;
 
 public record RoomMemberResponse(
@@ -6,3 +9,4 @@ public record RoomMemberResponse(
         String role
 ) {
 }
+

@@ -1,3 +1,6 @@
+/*
+defines task request and response contracts used by room task operations
+*/
 package com.tygilbert.virtualstudyroom.dto.task;
 
 import jakarta.validation.constraints.Size;
@@ -8,3 +11,4 @@ public record UpdateTaskRequest(
         Boolean done
 ) {
 }
+

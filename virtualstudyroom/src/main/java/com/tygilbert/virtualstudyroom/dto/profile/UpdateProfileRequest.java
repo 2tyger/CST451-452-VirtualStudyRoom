@@ -1,3 +1,6 @@
+/*
+defines profile request and response contracts for profile endpoints
+*/
 package com.tygilbert.virtualstudyroom.dto.profile;
 
 import jakarta.validation.constraints.Email;
@@ -11,3 +14,4 @@ public record UpdateProfileRequest(
         @Size(min = 8, max = 100) String newPassword
 ) {
 }
+

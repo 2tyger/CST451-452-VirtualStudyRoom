@@ -1,3 +1,6 @@
+/*
+renders study room collaboration ui and coordinates tasks chat timer and music
+*/
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
@@ -279,6 +282,7 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     private wsService: WsService
   ) {}
 
+  // resolves route room id and starts the room entry flow
   ngOnInit(): void {
     this.roomId = Number(this.route.snapshot.paramMap.get('roomId'));
     this.currentUserId = this.authService.getCurrentUserId();
@@ -290,10 +294,12 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     this.tryEnterRoom();
   }
 
+  // clears subscriptions and realtime resources when leaving the view
   ngOnDestroy(): void {
     this.teardownRealtime();
   }
 
+  // creates a room task then reloads task data
   createTask(): void {
     this.taskError = '';
     const title = this.newTaskTitle.trim();
@@ -312,6 +318,7 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     });
   }
 
+  // toggles task completion and applies updated task data
   toggleTaskDone(task: Task): void {
     this.taskError = '';
     this.taskApi.updateTask(this.roomId, task.id, { done: !task.done }).subscribe({
@@ -324,6 +331,7 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     });
   }
 
+  // deletes a task and applies local task update state
   deleteTask(taskId: number): void {
     this.taskError = '';
     this.taskApi.deleteTask(this.roomId, taskId).subscribe({
@@ -336,6 +344,7 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     });
   }
 
+  // sends chat text over websocket and clears the input field
   sendChat(): void {
     const body = this.chatMessage.trim();
     if (!body) {
@@ -348,6 +357,7 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     this.scheduleChatScrollToBottom();
   }
 
+  // leaves the current room after user confirmation
   leaveRoom(): void {
     if (!window.confirm('Leave this room?')) {
       return;
@@ -365,6 +375,7 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     });
   }
 
+  // deletes the room when the current user is the owner
   deleteRoom(): void {
     if (!window.confirm('Delete this room for all members? This cannot be undone.')) {
       return;
@@ -382,6 +393,7 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     });
   }
 
+  // executes explicit join flow from forbidden room entry state
   joinRoomExplicitly(): void {
     this.entryError = '';
     this.joining = true;
@@ -397,10 +409,12 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     });
   }
 
+  // routes back to the dashboard screen
   goToDashboard(): void {
     this.router.navigate(['/dashboard']);
   }
 
+  // starts timer control for owner users
   startTimer(): void {
     this.timerError = '';
     this.roomApi.startTimer(this.roomId).subscribe({
@@ -413,6 +427,7 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     });
   }
 
+  // pauses timer control for owner users
   pauseTimer(): void {
     this.timerError = '';
     this.roomApi.pauseTimer(this.roomId).subscribe({
@@ -425,6 +440,7 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     });
   }
 
+  // resets timer control for owner users
   resetTimer(): void {
     this.timerError = '';
     this.roomApi.resetTimer(this.roomId).subscribe({
@@ -473,6 +489,7 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     this.persistMusicPreferences();
   }
 
+  // loads room details and decides ready forbidden not found or error states
   private tryEnterRoom(): void {
     this.entryState = 'loading';
     this.entryError = '';
@@ -508,6 +525,7 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     });
   }
 
+  // loads initial room internals and subscribes to realtime event streams
   private loadRoomInternals(): void {
     this.roomApi.listMessages(this.roomId).subscribe(messages => {
       this.messageHistory = messages;
@@ -578,6 +596,7 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     }, 1000);
   }
 
+  // tears down websocket subscriptions timer render loop and audio playback
   private teardownRealtime(): void {
     this.wsSubscription?.unsubscribe();
     this.wsSubscription = undefined;
@@ -591,6 +610,7 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     }
   }
 
+  // applies timer payload to local component timer state
   private applyTimerState(state: TimerStateResponse): void {
     this.timerState = {
       isRunning: state.isRunning,
@@ -604,6 +624,7 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     this.refreshDisplayRemaining();
   }
 
+  // computes displayed remaining time using current timer mode and start time
   private refreshDisplayRemaining(): void {
     if (!this.timerState.isRunning || !this.timerState.startTime) {
       this.displayRemainingSeconds = Math.max(0, this.timerState.phaseDurationSeconds - this.timerState.elapsedSeconds);
@@ -621,6 +642,7 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     this.displayRemainingSeconds = Math.max(0, this.timerState.phaseDurationSeconds - currentElapsed);
   }
 
+  // merges task update events into local task list state
   private applyTaskUpdate(action: string, task: Task): void {
     if (task.roomId !== this.roomId) {
       return;
@@ -641,6 +663,7 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     }
   }
 
+  // loads task list data from the room task endpoint
   private loadTasks(): void {
     this.taskApi.listTasks(this.roomId).subscribe({
       next: tasks => {
@@ -841,3 +864,4 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     return `vsr_music_prefs_${scope}`;
   }
 }
+

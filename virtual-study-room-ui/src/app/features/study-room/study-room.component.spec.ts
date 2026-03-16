@@ -1,3 +1,6 @@
+/*
+renders study room collaboration ui and coordinates tasks chat timer and music
+*/
 import { NEVER } from 'rxjs';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
@@ -60,3 +63,5 @@ describe('StudyRoomComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+
+

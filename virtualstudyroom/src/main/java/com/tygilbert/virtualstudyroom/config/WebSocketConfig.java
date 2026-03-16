@@ -1,3 +1,6 @@
+/*
+configures framework behavior for security websocket and application wiring
+*/
 package com.tygilbert.virtualstudyroom.config;
 
 import java.util.Arrays;
@@ -43,3 +46,4 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registration.interceptors(stompAuthChannelInterceptor);
     }
 }
+

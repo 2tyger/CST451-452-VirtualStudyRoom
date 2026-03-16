@@ -1,3 +1,6 @@
+/*
+renders the room dashboard and handles create join and navigation actions
+*/
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -147,11 +150,13 @@ export class DashboardComponent implements OnInit {
 
   constructor(private roomApi: RoomApiService, private router: Router) {}
 
+  // loads display name and initial room list for the dashboard
   ngOnInit(): void {
     this.currentDisplayName = this.resolveDisplayName();
     this.loadRooms();
   }
 
+  // fetches membership scoped rooms and updates paging state
   loadRooms(): void {
     this.roomApi.listRooms().subscribe({
       next: rooms => {
@@ -165,6 +170,7 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  // creates a room and prepends it to the dashboard room list
   createRoom(): void {
     this.joinError = '';
     const name = this.newRoomName.trim();
@@ -185,6 +191,7 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  // joins a room by id and routes to the room screen
   joinRoom(): void {
     this.joinError = '';
 
@@ -225,6 +232,7 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  // navigates to the selected room route
   openRoom(roomId: number): void {
     this.router.navigate(['/rooms', roomId]);
   }
@@ -324,3 +332,4 @@ export class DashboardComponent implements OnInit {
     });
   }
 }
+

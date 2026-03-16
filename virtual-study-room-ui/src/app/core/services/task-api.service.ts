@@ -1,3 +1,6 @@
+/*
+wraps frontend api or websocket communication for feature components
+*/
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -25,3 +28,4 @@ export class TaskApiService {
     return this.http.delete<Task>(`${this.apiBase}/${roomId}/tasks/${taskId}`);
   }
 }
+

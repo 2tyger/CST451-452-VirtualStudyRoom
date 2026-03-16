@@ -1,3 +1,6 @@
+/*
+defines task request and response contracts used by room task operations
+*/
 package com.tygilbert.virtualstudyroom.dto.task;
 
 import java.time.OffsetDateTime;
@@ -13,3 +16,4 @@ public record TaskResponse(
         OffsetDateTime updatedAt
 ) {
 }
+

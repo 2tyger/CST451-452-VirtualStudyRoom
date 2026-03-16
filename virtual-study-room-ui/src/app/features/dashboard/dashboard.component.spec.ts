@@ -1,3 +1,6 @@
+/*
+renders the room dashboard and handles create join and navigation actions
+*/
 import { of } from 'rxjs';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
@@ -34,3 +37,5 @@ describe('DashboardComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+
+

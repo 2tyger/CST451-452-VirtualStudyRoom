@@ -1,3 +1,6 @@
+/*
+defines room request and response contracts shared across api layers
+*/
 package com.tygilbert.virtualstudyroom.dto.room;
 
 import jakarta.validation.constraints.NotBlank;
@@ -7,3 +10,4 @@ public record CreateRoomRequest(
         @NotBlank @Size(min = 2, max = 120) String name
 ) {
 }
+

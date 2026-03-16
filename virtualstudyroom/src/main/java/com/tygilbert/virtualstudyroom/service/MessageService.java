@@ -1,3 +1,6 @@
+/*
+contains business logic for this domain and coordinates repository operations
+*/
 package com.tygilbert.virtualstudyroom.service;
 
 import java.util.List;
@@ -31,6 +34,7 @@ public class MessageService {
         this.roomService = roomService;
     }
 
+    // returns bounded room message history for authorized members
     public List<MessageResponse> listMessages(Long roomId, String email, int limit) {
         User user = roomService.getCurrentUser(email);
         Room room = roomRepository.findById(roomId)
@@ -45,6 +49,7 @@ public class MessageService {
                 .toList();
     }
 
+    // converts persisted message entities to api response shape
     private MessageResponse toResponse(Message message) {
         return new MessageResponse(
                 message.getId(),
@@ -56,3 +61,4 @@ public class MessageService {
         );
     }
 }
+

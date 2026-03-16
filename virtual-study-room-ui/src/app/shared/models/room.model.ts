@@ -1,3 +1,6 @@
+/*
+declares frontend data models shared across services and components
+*/
 export interface Room {
   id: number;
   name: string;
@@ -21,3 +24,4 @@ export interface RoomDetail {
   room: Room;
   members: RoomMember[];
 }
+

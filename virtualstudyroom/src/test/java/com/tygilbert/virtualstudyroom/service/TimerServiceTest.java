@@ -1,3 +1,6 @@
+/*
+verifies service behavior and edge cases for this module
+*/
 package com.tygilbert.virtualstudyroom.service;
 
 import java.time.Instant;
@@ -103,3 +106,5 @@ class TimerServiceTest {
         verify(roomRepository).save(room);
     }
 }
+
+

@@ -1,3 +1,6 @@
+/*
+provides data access methods for this entity and query patterns
+*/
 package com.tygilbert.virtualstudyroom.repository;
 
 import java.util.List;
@@ -9,3 +12,4 @@ import com.tygilbert.virtualstudyroom.entity.Room;
 public interface RoomRepository extends JpaRepository<Room, Long> {
 	List<Room> findByRunningTrue();
 }
+

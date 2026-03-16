@@ -1,3 +1,6 @@
+/*
+application entry point that boots the spring runtime and scheduled tasks
+*/
 package com.tygilbert.virtualstudyroom;
 
 import org.springframework.boot.SpringApplication;
@@ -12,3 +15,4 @@ public class VirtualstudyroomApplication {
         SpringApplication.run(VirtualstudyroomApplication.class, args);
     }
 }
+

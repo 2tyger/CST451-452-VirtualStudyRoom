@@ -1,3 +1,6 @@
+/*
+renders authentication ui and submits login or registration requests
+*/
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -52,6 +55,7 @@ export class RegisterComponent {
     });
   }
 
+  // submits registration form data and routes to dashboard on success
   submit(): void {
     if (this.form.invalid) {
       return;
@@ -72,3 +76,4 @@ export class RegisterComponent {
     });
   }
 }
+

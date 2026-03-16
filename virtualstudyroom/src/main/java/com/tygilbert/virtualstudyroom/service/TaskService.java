@@ -1,3 +1,6 @@
+/*
+contains business logic for this domain and coordinates repository operations
+*/
 package com.tygilbert.virtualstudyroom.service;
 
 import java.util.List;
@@ -28,12 +31,14 @@ public class TaskService {
         this.roomService = roomService;
     }
 
+    // returns room tasks after membership validation
     public List<TaskResponse> listTasks(Long roomId, String email) {
         User user = roomService.getCurrentUser(email);
         roomService.ensureMembership(roomId, user.getId());
         return taskRepository.findByRoomIdOrderByCreatedAtAsc(roomId).stream().map(this::toResponse).toList();
     }
 
+    // creates a task in the requested room for a valid member
     public TaskResponse createTask(Long roomId, CreateTaskRequest request, String email) {
         User user = roomService.getCurrentUser(email);
         roomService.ensureMembership(roomId, user.getId());
@@ -50,6 +55,7 @@ public class TaskService {
         return toResponse(saved);
     }
 
+    // updates supported task fields after room and membership checks
     public TaskResponse updateTask(Long roomId, Long taskId, UpdateTaskRequest request, String email) {
         User user = roomService.getCurrentUser(email);
         roomService.ensureMembership(roomId, user.getId());
@@ -75,6 +81,7 @@ public class TaskService {
         return toResponse(saved);
     }
 
+    // deletes a room task and returns the deleted task payload
     public TaskResponse deleteTask(Long roomId, Long taskId, String email) {
         User user = roomService.getCurrentUser(email);
         roomService.ensureMembership(roomId, user.getId());
@@ -91,6 +98,7 @@ public class TaskService {
         return response;
     }
 
+    // maps task entities to api response payloads
     private TaskResponse toResponse(Task task) {
         return new TaskResponse(
                 task.getId(),
@@ -104,3 +112,4 @@ public class TaskService {
         );
     }
 }
+

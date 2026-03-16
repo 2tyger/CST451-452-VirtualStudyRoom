@@ -1,3 +1,4 @@
+# runs backend build and tests in github actions for pull requests and pushes
 name: Backend CI
 
 on:
@@ -29,3 +30,5 @@ jobs:
 
       - name: Build and run tests
         run: ./mvnw clean verify
+
+
