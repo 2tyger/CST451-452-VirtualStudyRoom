@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { RoomMessage } from '../../shared/models/message.model';
 import { Room, RoomDetail } from '../../shared/models/room.model';
+import { environment } from '../../../environments/environment';
 
 export interface TimerStateResponse {
   isRunning: boolean;
@@ -18,7 +19,7 @@ export interface TimerStateResponse {
 
 @Injectable({ providedIn: 'root' })
 export class RoomApiService {
-  private readonly apiBase = 'http://localhost:8080/api/rooms';
+  private readonly apiBase = `${environment.apiBase}/rooms`;
 
   constructor(private http: HttpClient) {}
 

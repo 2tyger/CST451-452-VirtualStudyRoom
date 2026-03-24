@@ -4,6 +4,7 @@ contains frontend service smoke tests for api request wiring
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { RoomApiService } from './room-api.service';
+import { environment } from '../../../environments/environment';
 
 describe('RoomApiService', () => {
   let service: RoomApiService;
@@ -29,7 +30,7 @@ describe('RoomApiService', () => {
   it('should request room list', () => {
     service.listRooms().subscribe();
 
-    const req = httpMock.expectOne('http://localhost:8080/api/rooms');
+    const req = httpMock.expectOne(`${environment.apiBase}/rooms`);
     expect(req.request.method).toBe('GET');
     req.flush([]);
   });

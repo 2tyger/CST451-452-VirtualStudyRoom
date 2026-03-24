@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
 import { Task } from '../../shared/models/task.model';
 import { RoomEvent, SupportedRoomEventType } from '../../shared/models/ws.model';
 import { AuthService } from './auth.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class WsService {
@@ -15,7 +16,7 @@ export class WsService {
   private readonly errorsSubject = new Subject<string>();
   readonly events$ = this.eventsSubject.asObservable();
   readonly errors$ = this.errorsSubject.asObservable();
-  private readonly brokerUrl = 'ws://localhost:8080/ws/websocket';
+  private readonly brokerUrl = environment.wsBase;
 
   constructor(private authService: AuthService) {}
 

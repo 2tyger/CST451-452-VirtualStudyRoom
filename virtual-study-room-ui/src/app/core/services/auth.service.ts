@@ -5,10 +5,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { AuthResponse, LoginRequest, RegisterRequest } from '../../shared/models/auth.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly apiBase = 'http://localhost:8080/api/auth';
+  private readonly apiBase = `${environment.apiBase}/auth`;
   private readonly tokenKey = 'vsr_token';
   private readonly userKey = 'vsr_user';
 

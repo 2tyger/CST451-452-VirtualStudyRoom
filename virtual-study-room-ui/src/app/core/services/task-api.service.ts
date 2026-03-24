@@ -5,10 +5,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Task } from '../../shared/models/task.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class TaskApiService {
-  private readonly apiBase = 'http://localhost:8080/api/rooms';
+  private readonly apiBase = `${environment.apiBase}/rooms`;
 
   constructor(private http: HttpClient) {}
 
