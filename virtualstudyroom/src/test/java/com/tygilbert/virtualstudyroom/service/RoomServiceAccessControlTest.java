@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.never;
@@ -105,6 +106,51 @@ class RoomServiceAccessControlTest {
         );
 
         assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
+    }
+
+    @Test
+    void joinRoom_createsMembershipWhenUserIsNotMember() {
+        User user = new User();
+        user.setId(7L);
+        user.setEmail("member@example.com");
+
+        Room room = new Room();
+        room.setId(10L);
+
+        when(userRepository.findByEmail("member@example.com")).thenReturn(Optional.of(user));
+        when(roomRepository.findById(10L)).thenReturn(Optional.of(room));
+        when(roomMemberRepository.existsByRoomIdAndUserId(10L, 7L)).thenReturn(false);
+
+        roomService.joinRoom(10L, "member@example.com");
+
+        verify(roomMemberRepository).save(any(RoomMember.class));
+    }
+
+    @Test
+    void deleteRoom_throwsForbiddenForNonOwner() {
+        User member = new User();
+        member.setId(99L);
+        member.setEmail("member@example.com");
+
+        User owner = new User();
+        owner.setId(1L);
+
+        Room room = new Room();
+        room.setId(10L);
+        room.setOwner(owner);
+
+        when(userRepository.findByEmail("member@example.com")).thenReturn(Optional.of(member));
+        when(roomRepository.findById(10L)).thenReturn(Optional.of(room));
+
+        ResponseStatusException ex = assertThrows(
+                ResponseStatusException.class,
+                () -> roomService.deleteRoom(10L, "member@example.com")
+        );
+
+        assertEquals(HttpStatus.FORBIDDEN, ex.getStatusCode());
+        verify(messageRepository, never()).deleteByRoomId(10L);
+        verify(taskRepository, never()).deleteByRoomId(10L);
+        verify(roomMemberRepository, never()).deleteByRoomId(10L);
     }
 }
 

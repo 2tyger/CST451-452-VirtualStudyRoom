@@ -96,6 +96,38 @@ class AuthServiceTest {
 
         assertEquals(HttpStatus.UNAUTHORIZED, ex.getStatusCode());
     }
+
+    @Test
+    void login_returnsTokenForValidCredentials() {
+        User user = new User();
+        user.setId(6L);
+        user.setEmail("student@example.com");
+        user.setDisplayName("Student");
+        user.setPasswordHash("hashed");
+
+        when(userRepository.findByEmail("student@example.com")).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("password123", "hashed")).thenReturn(true);
+        when(jwtService.generateToken("student@example.com")).thenReturn("jwt-token");
+
+        AuthResponse response = authService.login(new AuthLoginRequest("Student@Example.com", "password123"));
+
+        assertEquals("jwt-token", response.token());
+        assertEquals(6L, response.userId());
+        assertEquals("student@example.com", response.email());
+        assertEquals("Student", response.displayName());
+    }
+
+    @Test
+    void login_throwsUnauthorizedWhenUserNotFound() {
+        when(userRepository.findByEmail("missing@example.com")).thenReturn(Optional.empty());
+
+        ResponseStatusException ex = assertThrows(
+                ResponseStatusException.class,
+                () -> authService.login(new AuthLoginRequest("missing@example.com", "password123"))
+        );
+
+        assertEquals(HttpStatus.UNAUTHORIZED, ex.getStatusCode());
+    }
 }
 
 

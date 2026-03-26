@@ -7,7 +7,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.tygilbert.virtualstudyroom.dto.timer.TimerStateResponse;
 import com.tygilbert.virtualstudyroom.entity.Room;
 import com.tygilbert.virtualstudyroom.entity.User;
 import com.tygilbert.virtualstudyroom.repository.RoomRepository;
@@ -104,6 +107,69 @@ class TimerServiceTest {
         assertTrue(room.isRunning());
         assertFalse(room.getStartTime() == null);
         verify(roomRepository).save(room);
+    }
+
+    @Test
+    void pause_stopsRunningRoomAndStoresElapsedSeconds() {
+        User owner = new User();
+        owner.setId(1L);
+
+        Room room = new Room();
+        room.setId(20L);
+        room.setRunning(true);
+        room.setBreakPhase(false);
+        room.setElapsedSeconds(2L);
+        room.setStartTime(Instant.now().minusSeconds(3));
+
+        when(roomService.getCurrentUser("owner@example.com")).thenReturn(owner);
+        when(roomRepository.findById(20L)).thenReturn(Optional.of(room));
+
+        TimerStateResponse state = timerService.pause(20L, "owner@example.com");
+
+        assertFalse(state.isRunning());
+        assertFalse(room.isRunning());
+        assertNull(room.getStartTime());
+        assertTrue(room.getElapsedSeconds() >= 2L);
+        verify(roomRepository).save(room);
+    }
+
+    @Test
+    void reset_returnsRoomToDefaultFocusState() {
+        User owner = new User();
+        owner.setId(1L);
+
+        Room room = new Room();
+        room.setId(20L);
+        room.setRunning(true);
+        room.setBreakPhase(true);
+        room.setElapsedSeconds(9L);
+        room.setStartTime(Instant.now());
+
+        when(roomService.getCurrentUser("owner@example.com")).thenReturn(owner);
+        when(roomRepository.findById(20L)).thenReturn(Optional.of(room));
+
+        TimerStateResponse state = timerService.reset(20L, "owner@example.com");
+
+        assertFalse(state.isRunning());
+        assertEquals("FOCUS", state.phase());
+        assertEquals(0L, state.elapsedSeconds());
+        assertEquals(5L, state.phaseDurationSeconds());
+        assertEquals(5L, state.remainingSeconds());
+    }
+
+    @Test
+    void getCurrentState_usesComputedElapsedForRunningRoom() {
+        Room room = new Room();
+        room.setRunning(true);
+        room.setBreakPhase(false);
+        room.setElapsedSeconds(2L);
+        room.setStartTime(Instant.now().minusSeconds(2));
+
+        TimerStateResponse state = timerService.getCurrentState(room);
+
+        assertTrue(state.elapsedSeconds() >= 2L);
+        assertEquals("FOCUS", state.phase());
+        assertEquals(5L, state.phaseDurationSeconds());
     }
 }
 
