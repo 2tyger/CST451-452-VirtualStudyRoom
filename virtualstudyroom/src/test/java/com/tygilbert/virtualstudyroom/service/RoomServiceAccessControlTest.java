@@ -114,8 +114,12 @@ class RoomServiceAccessControlTest {
         user.setId(7L);
         user.setEmail("member@example.com");
 
+        User owner = new User();
+        owner.setId(1L);
+
         Room room = new Room();
         room.setId(10L);
+        room.setOwner(owner);
 
         when(userRepository.findByEmail("member@example.com")).thenReturn(Optional.of(user));
         when(roomRepository.findById(10L)).thenReturn(Optional.of(room));

@@ -119,7 +119,7 @@ class TimerServiceTest {
         room.setRunning(true);
         room.setBreakPhase(false);
         room.setElapsedSeconds(2L);
-        room.setStartTime(Instant.now().minusSeconds(3));
+        room.setStartTime(Instant.now().minusSeconds(1));
 
         when(roomService.getCurrentUser("owner@example.com")).thenReturn(owner);
         when(roomRepository.findById(20L)).thenReturn(Optional.of(room));
