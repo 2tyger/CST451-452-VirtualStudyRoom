@@ -88,6 +88,24 @@ describe('WsService', () => {
     expect(event.payload.body).toBe('hello');
   });
 
+  it('should parse room membership update payload', () => {
+    const raw = JSON.stringify({
+      type: 'room_membership_update',
+      roomId: 10,
+      timestamp: '2025-01-01T00:00:00Z',
+      payload: {
+        action: 'joined',
+        memberCount: 3
+      }
+    });
+
+    const event = (service as unknown as { parseRoomEvent: (body: string, roomId: number) => { type: string; payload: { action?: string; memberCount?: number } } }).parseRoomEvent(raw, 10);
+
+    expect(event.type).toBe('room_membership_update');
+    expect(event.payload.action).toBe('joined');
+    expect(event.payload.memberCount).toBe(3);
+  });
+
   it('should fallback to raw event when json parsing fails', () => {
     const event = (service as unknown as { parseRoomEvent: (body: string, roomId: number) => { type: string; payload: { message?: string } } }).parseRoomEvent('invalid-json', 10);
 

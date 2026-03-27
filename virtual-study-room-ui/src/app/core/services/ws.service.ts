@@ -132,6 +132,18 @@ export class WsService {
         };
       }
 
+      if (type === 'room_membership_update') {
+        return {
+          type,
+          roomId,
+          timestamp,
+          payload: {
+            action: String(payload['action'] ?? 'updated'),
+            memberCount: Number(payload['memberCount'] ?? 0)
+          }
+        };
+      }
+
       return {
         type,
         roomId,
@@ -155,7 +167,7 @@ export class WsService {
   }
 
   private isSupportedEventType(type: string): type is SupportedRoomEventType {
-    return type === 'timer_update' || type === 'task_update' || type === 'chat_message';
+    return type === 'timer_update' || type === 'task_update' || type === 'chat_message' || type === 'room_membership_update';
   }
 
   private asTimestamp(value: unknown): string {

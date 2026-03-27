@@ -12,6 +12,7 @@ import com.tygilbert.virtualstudyroom.dto.task.TaskResponse;
 import com.tygilbert.virtualstudyroom.dto.timer.TimerStateResponse;
 import com.tygilbert.virtualstudyroom.dto.ws.ChatMessagePayload;
 import com.tygilbert.virtualstudyroom.dto.ws.RealtimeEventType;
+import com.tygilbert.virtualstudyroom.dto.ws.RoomMembershipPayload;
 import com.tygilbert.virtualstudyroom.dto.ws.RoomEventDto;
 import com.tygilbert.virtualstudyroom.dto.ws.TaskUpdatePayload;
 import com.tygilbert.virtualstudyroom.dto.ws.TimerUpdatePayload;
@@ -46,6 +47,11 @@ public class RealtimeEventService {
     // publishes chat messages to the room topic
     public void publishChatMessage(Long roomId, String sender, String body) {
         publish(roomId, RealtimeEventType.CHAT_MESSAGE, new ChatMessagePayload(sender, body));
+    }
+
+    // publishes room membership updates to notify participant list refreshes
+    public void publishRoomMembershipUpdate(Long roomId, String action, long memberCount) {
+        publish(roomId, RealtimeEventType.ROOM_MEMBERSHIP_UPDATE, new RoomMembershipPayload(action, memberCount));
     }
 
     // wraps payloads in a shared realtime event envelope and sends to room topic

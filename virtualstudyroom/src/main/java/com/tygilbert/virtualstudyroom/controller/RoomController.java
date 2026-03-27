@@ -64,13 +64,17 @@ public class RoomController {
     // adds the authenticated user as a room member when needed
     @PostMapping("/{roomId}/join")
     public RoomResponse joinRoom(@PathVariable Long roomId, Authentication authentication) {
-        return roomService.joinRoom(roomId, authentication.getName());
+        RoomResponse room = roomService.joinRoom(roomId, authentication.getName());
+        realtimeEventService.publishRoomMembershipUpdate(roomId, "joined", room.memberCount());
+        return room;
     }
 
     // removes a non owner member from a room
     @PostMapping("/{roomId}/leave")
     public RoomResponse leaveRoom(@PathVariable Long roomId, Authentication authentication) {
-        return roomService.leaveRoom(roomId, authentication.getName());
+        RoomResponse room = roomService.leaveRoom(roomId, authentication.getName());
+        realtimeEventService.publishRoomMembershipUpdate(roomId, "left", room.memberCount());
+        return room;
     }
 
     // deletes a room and dependent data when requested by the owner

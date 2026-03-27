@@ -4,6 +4,8 @@ renders profile ui and handles profile loading and updates
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
 import { ProfileApiService } from '../../core/services/profile-api.service';
 import { UpdateProfileRequest } from '../../shared/models/profile.model';
 
@@ -69,10 +71,16 @@ export class ProfileComponent implements OnInit {
   saving = false;
   error = '';
   success = '';
+  private currentEmail = '';
 
   form;
 
-  constructor(private formBuilder: FormBuilder, private profileApi: ProfileApiService) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private profileApi: ProfileApiService,
+    private authService: AuthService,
+    private router: Router
+  ) {
     this.form = this.formBuilder.group({
       displayName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
       email: ['', [Validators.required, Validators.email]],
@@ -85,6 +93,7 @@ export class ProfileComponent implements OnInit {
     this.profileApi.getMyProfile().subscribe({
       next: profile => {
         this.loading = false;
+        this.currentEmail = profile.email;
         this.form.patchValue({
           displayName: profile.displayName,
           email: profile.email,
@@ -126,10 +135,22 @@ export class ProfileComponent implements OnInit {
       ...(raw.newPassword && raw.newPassword.trim() ? { newPassword: raw.newPassword } : {})
     };
 
+    const passwordChanged = !!raw.newPassword && !!raw.newPassword.trim();
+
     this.saving = true;
     this.profileApi.updateMyProfile(payload).subscribe({
       next: profile => {
         this.saving = false;
+
+        const emailChanged = profile.email.trim().toLowerCase() !== this.currentEmail.trim().toLowerCase();
+        if (emailChanged || passwordChanged) {
+          this.authService.logout();
+          this.router.navigate(['/login']);
+          return;
+        }
+
+        this.authService.syncStoredIdentity(profile.email, profile.displayName);
+        this.currentEmail = profile.email;
         this.success = 'Profile updated successfully.';
         this.form.patchValue({
           displayName: profile.displayName,

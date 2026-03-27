@@ -575,6 +575,10 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
           this.messageHistory = [...this.messageHistory, message];
           this.feedItems = [...this.feedItems, this.toFeedChatItem(message, this.feedItems.length)].slice(-300);
           this.scheduleChatScrollToBottom();
+        } else if (event.type === 'room_membership_update') {
+          this.pushSystemFeed(this.formatFeedLine(event));
+          this.scheduleChatScrollToBottom();
+          this.refreshParticipantList();
         } else {
           this.pushSystemFeed(this.formatFeedLine(event));
           this.scheduleChatScrollToBottom();
@@ -676,6 +680,25 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
     });
   }
 
+  // reloads room members after join or leave realtime updates
+  private refreshParticipantList(): void {
+    this.roomApi.getRoom(this.roomId).subscribe({
+      next: detail => {
+        this.roomDetail = {
+          room: {
+            ...this.roomDetail?.room,
+            ...detail.room
+          },
+          members: detail.members
+        };
+        this.canControlTimer = this.currentUserId !== null && detail.room.ownerId === this.currentUserId;
+      },
+      error: () => {
+        // ignore transient member refresh failures
+      }
+    });
+  }
+
   private formatFeedLine(event: RoomEvent): string {
     const time = this.formatTimestamp(event.timestamp);
 
@@ -714,6 +737,18 @@ export class StudyRoomComponent implements OnInit, OnDestroy {
       const sender = event.payload.sender;
       const body = event.payload.body;
       return `${time} ${sender}: ${body}`;
+    }
+
+    if (event.type === 'room_membership_update') {
+      const action = event.payload.action;
+      const count = event.payload.memberCount;
+      if (action === 'joined') {
+        return `${time} Participant joined (${count} total)`;
+      }
+      if (action === 'left') {
+        return `${time} Participant left (${count} total)`;
+      }
+      return `${time} Participants updated (${count} total)`;
     }
 
     return `${time} ${event.type}`;

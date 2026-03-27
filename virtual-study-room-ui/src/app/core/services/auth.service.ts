@@ -73,6 +73,27 @@ export class AuthService {
     }
   }
 
+  // updates cached user identity fields after profile edits
+  syncStoredIdentity(email: string, displayName: string): void {
+    try {
+      const raw = localStorage.getItem(this.userKey);
+      if (!raw) {
+        return;
+      }
+
+      const parsed = JSON.parse(raw) as Partial<AuthResponse>;
+      const nextUser: AuthResponse = {
+        token: typeof parsed.token === 'string' ? parsed.token : localStorage.getItem(this.tokenKey) ?? '',
+        userId: Number(parsed.userId ?? 0),
+        email,
+        displayName
+      };
+      localStorage.setItem(this.userKey, JSON.stringify(nextUser));
+    } catch {
+      // keep existing session if local user cache cannot be parsed
+    }
+  }
+
   private persistSession(response: AuthResponse): void {
     localStorage.setItem(this.tokenKey, response.token);
     localStorage.setItem(this.userKey, JSON.stringify(response));
