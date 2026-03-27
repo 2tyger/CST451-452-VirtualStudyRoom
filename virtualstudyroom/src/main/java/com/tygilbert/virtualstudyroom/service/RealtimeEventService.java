@@ -5,6 +5,9 @@ package com.tygilbert.virtualstudyroom.service;
 
 import java.time.OffsetDateTime;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +24,17 @@ import com.tygilbert.virtualstudyroom.dto.ws.TimerUpdatePayload;
 public class RealtimeEventService {
 
     private final SimpMessagingTemplate messagingTemplate;
+    private final MeterRegistry meterRegistry;
+
+    @Autowired
+    public RealtimeEventService(SimpMessagingTemplate messagingTemplate, MeterRegistry meterRegistry) {
+        this.messagingTemplate = messagingTemplate;
+        this.meterRegistry = meterRegistry;
+    }
 
     public RealtimeEventService(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
+        this.meterRegistry = null;
     }
 
     // publishes timer state updates to the room topic
@@ -56,17 +67,58 @@ public class RealtimeEventService {
 
     // wraps payloads in a shared realtime event envelope and sends to room topic
     private <T> void publish(Long roomId, RealtimeEventType type, T payload) {
+        Timer.Sample sample = startSample();
         RoomEventDto<T> event = new RoomEventDto<>(
                 type,
                 roomId,
                 OffsetDateTime.now(),
                 payload
         );
-        messagingTemplate.convertAndSend(topicForRoom(roomId), event);
+
+        try {
+            messagingTemplate.convertAndSend(topicForRoom(roomId), event);
+            incrementPublishCount(type, "success");
+        } catch (RuntimeException exception) {
+            incrementPublishCount(type, "error");
+            throw exception;
+        } finally {
+            stopPublishTimer(sample, type);
+        }
     }
 
     private String topicForRoom(Long roomId) {
         return "/topic/rooms/" + roomId;
+    }
+
+    private void incrementPublishCount(RealtimeEventType type, String result) {
+        if (meterRegistry == null) {
+            return;
+        }
+
+        meterRegistry.counter(
+                "vsr.realtime.events.published",
+                "event_type", type.wireValue(),
+                "result", result
+        ).increment();
+    }
+
+    private Timer.Sample startSample() {
+        if (meterRegistry == null) {
+            return null;
+        }
+        return Timer.start(meterRegistry);
+    }
+
+    private void stopPublishTimer(Timer.Sample sample, RealtimeEventType type) {
+        if (meterRegistry == null || sample == null) {
+            return;
+        }
+
+        sample.stop(
+                Timer.builder("vsr.realtime.events.publish.duration")
+                        .tag("event_type", type.wireValue())
+                        .register(meterRegistry)
+        );
     }
 }
 
