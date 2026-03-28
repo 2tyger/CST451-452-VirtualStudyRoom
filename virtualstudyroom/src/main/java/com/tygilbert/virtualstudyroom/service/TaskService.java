@@ -48,8 +48,8 @@ public class TaskService {
 
         Task task = new Task();
         task.setRoom(room);
-        task.setTitle(request.title().trim());
-        task.setDescription(request.description());
+        task.setTitle(normalizeTitle(request.title()));
+        task.setDescription(normalizeDescription(request.description()));
 
         Task saved = taskRepository.save(task);
         return toResponse(saved);
@@ -68,10 +68,10 @@ public class TaskService {
         }
 
         if (request.title() != null && !request.title().isBlank()) {
-            task.setTitle(request.title().trim());
+            task.setTitle(normalizeTitle(request.title()));
         }
         if (request.description() != null) {
-            task.setDescription(request.description());
+            task.setDescription(normalizeDescription(request.description()));
         }
         if (request.done() != null) {
             task.setDone(request.done());
@@ -110,6 +110,37 @@ public class TaskService {
                 task.getCreatedAt(),
                 task.getUpdatedAt()
         );
+    }
+
+    private String normalizeTitle(String rawTitle) {
+        String normalized = normalizeText(rawTitle).trim();
+        if (normalized.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Task title is required");
+        }
+        return normalized;
+    }
+
+    private String normalizeDescription(String rawDescription) {
+        if (rawDescription == null) {
+            return null;
+        }
+        return normalizeText(rawDescription);
+    }
+
+    private String normalizeText(String value) {
+        return stripDisallowedControlChars(value.replace("\r\n", "\n"));
+    }
+
+    private String stripDisallowedControlChars(String value) {
+        StringBuilder builder = new StringBuilder(value.length());
+        for (int i = 0; i < value.length(); i++) {
+            char ch = value.charAt(i);
+            if (Character.isISOControl(ch) && ch != '\n' && ch != '\t') {
+                continue;
+            }
+            builder.append(ch);
+        }
+        return builder.toString();
     }
 }
 

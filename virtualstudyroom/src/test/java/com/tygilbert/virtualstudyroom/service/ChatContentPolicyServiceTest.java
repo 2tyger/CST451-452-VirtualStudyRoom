@@ -12,12 +12,12 @@ import org.springframework.web.server.ResponseStatusException;
 class ChatContentPolicyServiceTest {
 
     @Test
-    void sanitizeAndValidate_escapesHtmlAndStripsControlChars() {
+    void sanitizeAndValidate_preservesReadableTextAndStripsControlChars() {
         ChatContentPolicyService policy = new ChatContentPolicyService(100);
 
         String sanitized = policy.sanitizeAndValidate("  <b>hello</b>\u0001  ");
 
-        assertEquals("&lt;b&gt;hello&lt;/b&gt;", sanitized);
+        assertEquals("<b>hello</b>", sanitized);
     }
 
     @Test

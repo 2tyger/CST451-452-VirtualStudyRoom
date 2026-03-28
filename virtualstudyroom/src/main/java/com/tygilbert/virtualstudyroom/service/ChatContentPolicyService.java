@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.util.HtmlUtils;
 
 @Service
 public class ChatContentPolicyService {
@@ -34,7 +33,7 @@ public class ChatContentPolicyService {
             );
         }
 
-        return HtmlUtils.htmlEscape(normalized);
+        return normalized;
     }
 
     private String stripDisallowedControlChars(String value) {

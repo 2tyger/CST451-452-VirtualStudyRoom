@@ -177,4 +177,59 @@ class TaskServiceTest {
         assertEquals("First", responses.get(0).title());
         assertEquals("Second", responses.get(1).title());
     }
+
+    @Test
+    void createTask_normalizesTitleAndDescriptionWithoutHtmlEncoding() {
+        User user = new User();
+        user.setId(4L);
+
+        Room room = new Room();
+        room.setId(10L);
+
+        when(roomService.getCurrentUser("member@example.com")).thenReturn(user);
+        when(roomRepository.findById(10L)).thenReturn(Optional.of(room));
+        when(taskRepository.save(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        taskService.createTask(
+                10L,
+                new CreateTaskRequest("  i'm working <script>alert(1)</script>\u0001  ", "line1\r\nline2\u0002"),
+                "member@example.com"
+        );
+
+        ArgumentCaptor<Task> taskCaptor = ArgumentCaptor.forClass(Task.class);
+        verify(taskRepository).save(taskCaptor.capture());
+
+        Task saved = taskCaptor.getValue();
+        assertEquals("i'm working <script>alert(1)</script>", saved.getTitle());
+        assertEquals("line1\nline2", saved.getDescription());
+    }
+
+    @Test
+    void updateTask_normalizesDescriptionWithoutHtmlEncoding() {
+        User user = new User();
+        user.setId(4L);
+
+        Room room = new Room();
+        room.setId(10L);
+
+        Task task = new Task();
+        task.setId(7L);
+        task.setRoom(room);
+        task.setTitle("Old");
+        task.setDescription("Old description");
+        task.setDone(false);
+
+        when(roomService.getCurrentUser("member@example.com")).thenReturn(user);
+        when(taskRepository.findById(7L)).thenReturn(Optional.of(task));
+        when(taskRepository.save(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        TaskResponse response = taskService.updateTask(
+                10L,
+                7L,
+                new UpdateTaskRequest(null, "update <b>now</b>\u0003", null),
+                "member@example.com"
+        );
+
+        assertEquals("update <b>now</b>", response.description());
+    }
 }
