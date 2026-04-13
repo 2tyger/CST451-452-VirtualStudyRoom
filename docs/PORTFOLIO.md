@@ -284,7 +284,7 @@ cd virtual-study-room-ui && npm test -- --watch=false --browsers=ChromeHeadless
 
 [![Watch the video](https://img.youtube.com/vi/dzhfWku68co/maxresdefault.jpg)](https://www.youtube.com/watch?v=dzhfWku68co)
 
-### If the above frame fails to redirect, click here: [demo video](https://www.youtube.com/watch?v=dzhfWku68co). Otherwise, the compressed version of the video can be found at docs/video/PortfolioVideo.mp4
+### If the above frame fails to redirect, click here: [demo video](https://www.youtube.com/watch?v=dzhfWku68co). Otherwise, the compressed version of the video can be found [here](https://github.com/2tyger/CST451-452-VirtualStudyRoom/blob/main/docs/video/PortfolioVideo.mp4).
 
 This demo provides an overview of the application in use, as well as other informative topics in relation to the development of this application.
 
