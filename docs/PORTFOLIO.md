@@ -282,7 +282,7 @@ cd virtual-study-room-ui && npm test -- --watch=false --browsers=ChromeHeadless
 
 ## Screencast
 
-<video src="video/PortfolioVideoFINAL.mp4" width="600" controls>
+<video src="video/PortfolioVideo.mp4" width="600" controls>
   Your browser does not support the video tag.
 </video>
 
