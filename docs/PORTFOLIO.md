@@ -282,9 +282,11 @@ cd virtual-study-room-ui && npm test -- --watch=false --browsers=ChromeHeadless
 
 ## Screencast
 
-[![Watch the video](https://img.youtube.com/vi/dzhfWku68co/maxresdefault.jpg)](https://www.youtube.com/watch?v=dzhfWku68co)
+<video src="video/PortfolioVideoFINAL.mp4" width="600" controls>
+  Your browser does not support the video tag.
+</video>
 
-### If the above frame fails to redirect, click here: [demo video](https://www.youtube.com/watch?v=dzhfWku68co).
+### If the above embed fails to load, click here to view on [YouTube](https://www.youtube.com/watch?v=dzhfWku68co).
 
 
 This demo provides an overview of the application in use, as well as other informative topics in relation to the development of this application.
